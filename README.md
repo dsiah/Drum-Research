@@ -2,7 +2,7 @@
 
 
 ### Dependencies 
-You will need pip installed on your machine. (Installing Python Install Package instructions)[https://pip.pypa.io/en/latest/installing.html]
+You will need pip installed on your machine. [Installing Python Install Package instructions](https://pip.pypa.io/en/latest/installing.html)
 
 Run these two commands to get the IPython library bundled with IPython Notebooks as well as Librosa.
 
