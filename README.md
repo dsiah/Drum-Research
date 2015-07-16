@@ -36,6 +36,6 @@ SampleExtraction.ipynb
 
 - __LVQLib.ipynb__ : A python notebook that outlines the LVQ neural network
 - __SampleExtraction.ipynb__ : Sample Extraction Pipeline gets the onsets and saves them
-- __data/__ : where the extracted CSV STFT (Short Time Fourier Transform) of onsets reside
+- __Data/__ : where the extracted CSV STFT (Short Time Fourier Transform) of onsets reside
 - __Resources/__ : Samples for testing the SVQNet
-- __libs/__ : Python modules converted from the Ipython notebooks so they can be used elsewhere
+- __Libs/__ : Python modules converted from the Ipython notebooks so they can be used elsewhere
