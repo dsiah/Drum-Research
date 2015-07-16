@@ -21,11 +21,11 @@ Resources/
 |---- Sample
 |---- More samples ...
 
-data/
+Data/
 |---- Onset STFT CSV
 |---- More onset STFT CSVs ...
 
-libs/
+Libs/
 |---- Python modules 
 |---- More python modules ...
 
