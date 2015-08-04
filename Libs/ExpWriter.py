@@ -14,10 +14,19 @@ class SEWriter():
         f.write("(" + operator)
         
         for arg in args:
-            f.write(arg)
+            f.write(" %s" % str(arg))
         
         f.write(")\n")
         
+    def writeSexpArr(self, operator, arr):
+        f = self.document
+        f.write("(" + operator)
+        
+        for unit in arr:
+            f.write(unit + " ")
+        
+        f.write(")\n")
+    
     def finish(self):
         self.document.write("\n)")
         self.document.close()
