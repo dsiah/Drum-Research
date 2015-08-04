@@ -1,13 +1,13 @@
 
 # coding: utf-8
 
-# In[128]:
+# In[1]:
 
 import os, csv
 from random import shuffle
 
 
-# In[186]:
+# In[2]:
 
 class LVQData:
     def __init__(self):
@@ -61,7 +61,6 @@ class LVQData:
         Lookup the instument specified by the number of the neuron
             - index must be a valid integer
         """
-        
         return self.instrumentMap[index]
 
     def inverseLookupInstrument(self, name):
@@ -91,17 +90,19 @@ class LVQData:
             read.next()
             
             for row in read:
-                data_struct = (arrayParser(row[1]), label) # Tuple with STFT bin list and then the label
+                data_struct = (arrayParser(row[1]), label)
                 self.data.append(data_struct)
-            
-            if not(label in self.instrumentMap.items()):
-                self.instrumentMap[self.instrumentNum] = label
-                self.instrumentNum += 1
+
+        if not(label in self.instrumentMap.values()):
+            self.instrumentMap[self.instrumentNum] = label
+            self.instrumentNum += 1
+        else:
+            print "%s is already in instrument map." % (label)
             
         return self.data
 
 
-# In[187]:
+# In[3]:
 
 class LVQNeuron:
     def __init__(self, name):
@@ -120,12 +121,11 @@ class LVQNeuron:
         for weight in weights:
             self.weights.append(float(weight))
         
-        
     def __len__(self):
         return len(self.weights)
 
 
-# In[188]:
+# In[4]:
 
 class LVQNet:
     def __init__(self, inCount, outCount):
@@ -367,7 +367,7 @@ class LVQNet:
         return average(means)
 
 
-# In[189]:
+# In[5]:
 
 def arrayParser(arr):
     """
@@ -381,7 +381,44 @@ def arrayParser(arr):
     return smooth_stage_2
 
 
-# In[199]:
+# In[6]:
+
+def test(network, testdata, dataset):
+    """
+    General purpose testing (guess and check) for supervised dataset.
+        - network must be a trained LVQ Network object
+        - testdata must be a LVQ Data object
+        - dataset must be a LVQ Data object (the one used to train the network)
+    """
+    numWrong = 0
+    frameNum = 0
+    frameLen = len(testdata.data)
+    
+    print "%d samples in testset. Commencing trials:" % (frameLen)
+    print "Classifications:", dataset.instrumentMap
+    
+    for frame in testset.data:
+        frameNum     += 1
+        guess         = koho.guess(frame[0])
+        guessGradient = koho.minDistGradient(frame[0])
+        correctNum    = dataset.inverseLookupInstrument(frame[1])
+        correctName   = frame[1]
+        
+        # Debug testing the neurons
+        if (dataset.lookupInstrument(guess) != frame[1]):
+            print "\n%d) Incorrect Guess : %s (%d)"  % (frameNum, dataset.lookupInstrument(guess), guess),
+            print "[correct answer is: %s (%d)]" % (correctName, correctNum)
+            print [ "%d: %.2f" % (key, guessGradient[key]) for key in guessGradient ]
+            numWrong += 1
+        else:
+            print "Correct Guess: %s (%d)" % (dataset.lookupInstrument(guess), guess),
+            print [ "%d: %.2f" % (key, guessGradient[key]) for key in guessGradient ]
+            
+    print "\nIncorrect %d / %d times" % (numWrong, frameLen)
+    return True
+
+
+# In[33]:
 
 ### Driver: Outline of the API / Algorithm in use    
 if __name__ == '__main__':
@@ -390,48 +427,33 @@ if __name__ == '__main__':
     
     # Enter data (1-1 CSV to Output Neurons) 
     # Initializes the neurons with first onset from each unique CSV
-    koho.enterCSV('./Data/snareFrames.csv')
-    koho.enterCSV('./Data/kickDrumFrames.csv')
+    koho.enterCSV('./Data/Snare/snareFrames.csv')
+    koho.enterCSV('./Data/Kick/kickDrumFrames4.csv')
     
     # Instantiate LVQ Training Data Structure and load rest of CSVs with labels
     dataset = LVQData()
-    dataset.loadCSV('./Data/snareFrames.csv',    'snare-drum')    # 0
-    dataset.loadCSV('./Data/kickDrumFrames.csv', 'kick-drum')     # 1
-
+    
+    dataset.loadCSV('./Data/Snare/snareFrames.csv',    'snare-drum') # 0
+    dataset.loadCSV('./Data/Snare/snareFrames3.csv',   'snare-drum') # 0
+    dataset.loadCSV('./Data/Kick/kickDrumFrames4.csv', 'kick-drum')  # 1
+    dataset.loadCSV('./Data/Kick/kickDrumFrames.csv',  'kick-drum')  # 1
+    
     sigma = 1 # Sigma tracks the meanSquaredError between each calibration iteration in the LVQ training
-    while (koho.iter < 2500):
+    while (koho.iter < 500):
         dataset.shuffleData(3)
         sigma  = koho.run(dataset)
         alphie = koho.reduceAlpha(99)
         print sigma
 
 
-# In[200]:
+# In[34]:
 
 if __name__ == '__main__':
     testset = LVQData()
     
     testset.loadCSV('./Data/Test-Onsets/kickDrumTestFrames.csv', 'kick-drum')
-    testset.loadCSV('./Data/kickDrumFrames.csv', 'kick-drum')
     testset.loadCSV('./Data/Test-Onsets/snareTestFrames.csv',    'snare-drum')
-    
-    # Test Script
-    print len(testset.data), "samples in testset. Commencing trials:"
-    print "Categories:", dataset.instrumentMap
-    
-    for frame in testset.data:
-        guess         = koho.guess(frame[0])
-        guessGradient = koho.minDistGradient(frame[0])
-        correctNum    = dataset.inverseLookupInstrument(frame[1])
-        correctName   = frame[1]
-        
-        # Debug testing the neurons
-        if (dataset.lookupInstrument(guess) != frame[1]):
-            print "Incorrect Guess : %s (%d)"  % (dataset.lookupInstrument(guess), guess),
-            print "[correct answer is: %s (%d)]" % (correctName, correctNum)
-            print guessGradient
-            print "Off by %f" % (abs(guessGradient[correctNum] - guessGradient[guess]))
-        else:
-            print "Correct Guess: %s (%d)" % (dataset.lookupInstrument(guess), guess)
-            print guessGradient
+    testset.loadCSV('./Data/Snare/snareFrames2.csv',             'snare-drum')
+
+    test(koho, testset, dataset)
 
