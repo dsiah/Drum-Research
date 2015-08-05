@@ -390,7 +390,8 @@ def test(network, testdata, dataset):
     print "\nIncorrect %d / %d times" % (numWrong, frameLen)
     return True
 
-### Driver: Outline of the API / Algorithm in use    
+### Driver: Outline of the API / Algorithm in use 
+### (Training the network)
 if __name__ == '__main__':
     # Create Network with in and out neuron parameters
     koho = LVQNet(1025, 2)
@@ -415,7 +416,8 @@ if __name__ == '__main__':
         alphie = koho.reduceAlpha(99)
         print sigma
 
-
+### Testing the Network
+### (Guessing with the network)
 if __name__ == '__main__':
     testset = LVQData()
     
@@ -424,4 +426,3 @@ if __name__ == '__main__':
     testset.loadCSV('./Data/Snare/snareFrames2.csv',             'snare-drum')
 
     test(koho, testset, dataset)
-
