@@ -5,7 +5,7 @@ import os
 class SEWriter():
     def __init__(self, name, path):
         # (TODO) add path logic
-        ext = '.sexp'
+        ext = '.lvq'
         self.document = open(path + name + ext, 'w')
         self.document.write("(network (name %s)" % name)
         
