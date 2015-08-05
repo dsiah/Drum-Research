@@ -1,13 +1,7 @@
-
 # coding: utf-8
-
-# In[1]:
 
 import os, csv
 from random import shuffle
-
-
-# In[2]:
 
 class LVQData:
     def __init__(self):
@@ -101,9 +95,6 @@ class LVQData:
             
         return self.data
 
-
-# In[3]:
-
 class LVQNeuron:
     def __init__(self, name):
         self.name = name
@@ -123,9 +114,6 @@ class LVQNeuron:
         
     def __len__(self):
         return len(self.weights)
-
-
-# In[4]:
 
 class LVQNet:
     def __init__(self, inCount, outCount):
@@ -164,18 +152,6 @@ class LVQNet:
         if len(prev) == len(newWeights):
             prev.weights = newWeights
     
-    def saveLVQNet(self, filepath):
-        """
-        Incomplete! Do not use!
-        """
-        with open(filepath, 'wb') as f:
-            cursor = csv.writer(f, delimiter=',')
-            cursor.writerow([self.inputs, self.outputs, self.alpha, 
-                             self.csvCount, self.iter])
-            
-            for key, val in self.neurons.items():
-                cursor.writerow([key, val])
-        
     # STEP 0
     def enterCSV(self, filepath): 
         """
@@ -366,9 +342,6 @@ class LVQNet:
             
         return average(means)
 
-
-# In[5]:
-
 def arrayParser(arr):
     """
     ArrayParser takes an array created from reading a CSV into memory and 
@@ -417,9 +390,6 @@ def test(network, testdata, dataset):
     print "\nIncorrect %d / %d times" % (numWrong, frameLen)
     return True
 
-
-# In[33]:
-
 ### Driver: Outline of the API / Algorithm in use    
 if __name__ == '__main__':
     # Create Network with in and out neuron parameters
@@ -445,8 +415,6 @@ if __name__ == '__main__':
         alphie = koho.reduceAlpha(99)
         print sigma
 
-
-# In[34]:
 
 if __name__ == '__main__':
     testset = LVQData()
